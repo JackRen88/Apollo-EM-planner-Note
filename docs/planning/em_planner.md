@@ -1597,3 +1597,23 @@ const ReferenceLineInfo *Frame::FindDriveReferenceLineInfo() {
 ```
 
 全局最优的路径相对来说比较简单，只需要寻找cost最小的参考线。
+
+## issue
+
+1.in samplepoint function,how pull_over planning status is defined?
+
+2. modify err
+'''
+      if (init_sl_point_.l() < eff_right_width) {
+        sample_left_boundary = std::fmin(sample_left_boundary,
+                                         init_sl_point_.l() + sample_l_range);
+      }
+'''
+
+as :
+'''
+      if (init_sl_point_.l() < -eff_right_width) {
+        sample_left_boundary = std::fmin(sample_left_boundary,
+                                         init_sl_point_.l() + sample_l_range);
+      }
+'''
