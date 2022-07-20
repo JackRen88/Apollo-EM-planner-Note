@@ -1630,3 +1630,16 @@ modified as :
         (end_l - init_sl_point_.l() / 2.0) * (end_l - init_sl_point_.l() / 2.0) * config_.path_end_l_cost();
   }
 ```
+
+4.when calculate static obstacle cost between different level nodes,has a error:
+```
+  if (adc_front_s > obs_sl_boundary.end_s()) {
+    return obstacle_cost;
+  }
+```
+modified as :
+```
+  if (adc_end_s > obs_sl_boundary.end_s()) {
+    return obstacle_cost;
+  }
+```
