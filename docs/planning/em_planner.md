@@ -1579,8 +1579,7 @@ Status EMPlanner::PlanOnReferenceLine(
 ## 寻找全局最优路径
 
 通过以上的路径规划，速度规划以及路径融合，每条参考线都可以得到其对应的最优规划路径以及具有cost。注意这个cost和路径规划中使用的cost不一样，路径规划中的cost仅仅是用来寻找最优路径，而参考线的cost是上面提到的三种，也是宏观意义上的cost。
-
-```c++
+```
 /// file in apollo/modules/planning/common/frame.cc
 const ReferenceLineInfo *Frame::FindDriveReferenceLineInfo() {
   double min_cost = std::numeric_limits<double>::infinity();
@@ -1601,33 +1600,33 @@ const ReferenceLineInfo *Frame::FindDriveReferenceLineInfo() {
 ## issue
 1.in samplepoint function,how pull_over planning status is defined?
 2. modify err
-'''
+```
       if (init_sl_point_.l() < eff_right_width) {
         sample_left_boundary = std::fmin(sample_left_boundary,
                                          init_sl_point_.l() + sample_l_range);
       }
-'''
+```
 as :
-'''
+```
       if (init_sl_point_.l() < -eff_right_width) {
         sample_left_boundary = std::fmin(sample_left_boundary,
                                          init_sl_point_.l() + sample_l_range);
       }
-'''
+```
 
 3.when calculate Path Cost between different level nodes,has a error:
-'''
+```
   if (curr_level == total_level) {
     const float end_l = curve.Evaluate(0, end_s - start_s);
     path_cost +=
         std::sqrt(end_l - init_sl_point_.l() / 2.0) * config_.path_end_l_cost();
   }
-'''
+```
 modified as :
-'''
+```
   if (curr_level == (total_level - 1)) {
     const float end_l = curve.Evaluate(0, end_s - start_s);
     path_cost +=
-        std::sqrt(end_l - init_sl_point_.l() / 2.0) * config_.path_end_l_cost();
+        (end_l - init_sl_point_.l() / 2.0) * (end_l - init_sl_point_.l() / 2.0) * config_.path_end_l_cost();
   }
-'''
+```
