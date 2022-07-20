@@ -1614,3 +1614,20 @@ as :
                                          init_sl_point_.l() + sample_l_range);
       }
 '''
+
+3.when calculate Path Cost between different level nodes,has a error:
+'''
+  if (curr_level == total_level) {
+    const float end_l = curve.Evaluate(0, end_s - start_s);
+    path_cost +=
+        std::sqrt(end_l - init_sl_point_.l() / 2.0) * config_.path_end_l_cost();
+  }
+'''
+modified as :
+'''
+  if (curr_level == (total_level - 1)) {
+    const float end_l = curve.Evaluate(0, end_s - start_s);
+    path_cost +=
+        std::sqrt(end_l - init_sl_point_.l() / 2.0) * config_.path_end_l_cost();
+  }
+'''
