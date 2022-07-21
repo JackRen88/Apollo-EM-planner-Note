@@ -600,13 +600,13 @@ bool DPRoadGraph::GenerateMinCostPath(
 }
 ```
 
-额外补充一点，如果和比较两个节点的cost，除了cost有对应的值，还有三个优先级状态:
+额外补充一点，如果比较两个cost(ComparableCost)，除了cost有对应的值，还有三个需要考虑的状态:
 
 - HAS_COLLISION: 存在碰撞
 - OUT_OF_BOUNDARY：超出边界
 - OUT_OF_LANE：超出车道
 
-三个优先级依次从高到低。在比较两个cost(ComparableCost)时，首先比较cost优先级，如果优先级不一样，那么优先级高的cost大(不看cost值大小)；如果优先级一样，才比较cost值大小。
+在比较两个新旧路径cost(ComparableCost)时，首先比较以上三个状态，根据新旧路径以上三个状态进行选择新路径；如果新旧路径以上三个状态一样，再比较cost值大小。
 
 
 ## 路径决策器--PathDecider
