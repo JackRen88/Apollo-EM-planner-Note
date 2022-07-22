@@ -1643,3 +1643,5 @@ modified as :
     return obstacle_cost;
   }
 ```
+
+5.static obstacle is labered as nudge,but dynamic obstacle is not labered as nudge
