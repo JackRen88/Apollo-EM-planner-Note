@@ -1645,3 +1645,23 @@ modified as :
 ```
 
 5.static obstacle is labered as nudge,but dynamic obstacle is not labered as nudge
+
+6.GetRowRange in the calculatetoalcost function has a issue,such as
+```
+  const float delta_s_upper_bound =
+      v0 * unit_t_ + vehicle_param_.max_acceleration() * speed_coeff;
+      
+    const float delta_s_lower_bound = std::fmax(
+      0.0, v0 * unit_t_ + vehicle_param_.max_deceleration() * speed_coeff);    
+  }
+```
+
+modify as :
+```
+  const float delta_s_upper_bound =
+      v0 * unit_t_ + 0.5 * vehicle_param_.max_acceleration() * speed_coeff;
+      
+    const float delta_s_lower_bound = std::fmax(
+      0.0, v0 * unit_t_ + 0.5 * vehicle_param_.max_deceleration() * speed_coeff);    
+  }
+```
