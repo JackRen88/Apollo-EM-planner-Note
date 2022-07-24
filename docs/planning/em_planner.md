@@ -1678,3 +1678,14 @@ modified as :
       continue;
     }
 ```
+below code should be ignoreDecision ?:
+```
+    if (boundary.boundary_type() == StBoundary::BoundaryType::KEEP_CLEAR) {
+      ObjectDecisionType stop_decision;
+      if (CreateStopDecision(*path_obstacle, &stop_decision,
+                             -FLAGS_stop_line_stop_distance)) {
+        path_obstacle->AddLongitudinalDecision("dp_st_graph/keep_clear",
+                                               stop_decision);
+      }
+    }
+```    
