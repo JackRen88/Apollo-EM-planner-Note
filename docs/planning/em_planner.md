@@ -1665,3 +1665,16 @@ modify as :
       0.0, v0 * unit_t_ + 0.5 * vehicle_param_.max_deceleration() * speed_coeff);    
   }
 ```
+7.makeobjectdecision in speed decider exists a issue:
+```
+    if (path_obstacle->HasLongitudinalDecision()) {
+      AppendIgnoreDecision(path_obstacle);
+      continue;
+    }
+```
+modified as :
+```
+    if (path_obstacle->HasLongitudinalDecision()) {
+      continue;
+    }
+```
