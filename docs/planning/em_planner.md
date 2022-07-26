@@ -734,7 +734,7 @@ for (int i = 0; i < trajectory.trajectory_point_size(); ++i) {
 ```c++
 Status StBoundaryMapper::MapWithDecision(
     PathObstacle* path_obstacle, const ObjectDecisionType& decision) const {
-  // 计算障碍物的边界框，当且仅当障碍物再某个时刻与无人车规划路径有重叠时，才被考虑。
+  // 计算障碍物的边界框，当且仅当障碍物再某个时cost_1 = \sum_{i=1}^{n} \Big( w_1 \cdot \int\limits_{0}^{d_i} (f_i')^2(s) ds + w_2 \cdot \int\limits_{0}^{d_i} (f_i'')^2(s) ds + w_3 \cdot \int\limits_{0}^{d_i} (f_i^{\prime\prime\prime})^2(s) ds \Big) $$刻与无人车规划路径有重叠时，才被考虑。
   std::vector<STPoint> lower_points;
   std::vector<STPoint> upper_points;
   if (!GetOverlapBoundaryPoints(path_data_.discretized_path().path_points(),
@@ -1340,9 +1340,9 @@ min_deceleration: -4.5
 
 ### 3. 核设置，也就是QP形式中优化目标和正则惩罚项设置
 
-按照Apollo文档，cost函数主要分为三部分，第一部分就是f(t)的积分运算，这和参考线平滑也是一致，只是参考线平滑中只用到三阶导数，而这里用了二阶和三阶导，求解方法和后者一样:
+按照Apollo文档，cost函数主要分为三部分，第一部分就是f(t)的积分运算，这和参考线平滑也是一致，只是参考线平滑中只用到三阶导数，而这里用了二阶和三阶导，下面为加速度和加加速度积分项:
 
-$$ cost_1 = \sum_{i=1}^{n} \Big( w_1 \cdot \int\limits_{0}^{d_i} (f_i')^2(s) ds + w_2 \cdot \int\limits_{0}^{d_i} (f_i'')^2(s) ds + w_3 \cdot \int\limits_{0}^{d_i} (f_i^{\prime\prime\prime})^2(s) ds \Big) $$
+$$ cost_1 = \sum_{i=1}^{n} \Big(w_2 \cdot \int\limits_{0}^{d_i} (f_i'')^2(s) ds + w_3 \cdot \int\limits_{0}^{d_i} (f_i^{\prime\prime\prime})^2(s) ds \Big) $$
 
 ```c++
 if (qp_st_speed_config_.qp_spline_config().accel_kernel_weight() > 0) {
