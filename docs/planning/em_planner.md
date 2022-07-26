@@ -1358,8 +1358,6 @@ if (qp_st_speed_config_.qp_spline_config().jerk_kernel_weight() > 0) {
 
 第二部分是需要保证拟合的st路径和最终的st路径相似
 
-$$ cost_2 = \sum_{i=1}^{n}\sum_{j=1}^{m}\Big(f_i(t_j)- s_j\Big)^2 $$
-
 ```c++
 Status QpSplineStGraph::AddCruiseReferenceLineKernel(const double weight) {
   auto* spline_kernel = spline_generator_->mutable_spline_kernel();
@@ -1406,6 +1404,41 @@ bool Spline1dKernel::AddReferenceLineKernelMatrix(
 代码中给出的方案是：$ 2x^THx + x^Tg(w0) $
 
 $ x^THx $本质上是$ A^TT^TTA $，T是$ [1, t, t^2, t^3, t^4, t^5]^T $，A对应系数向量。其中2H对应的ref_kernel，也就是系数矩阵，g(w0)是对应offset_coef。权值weight = 0.3\*8/31.
+
+
+$$ cost_2 = \sum_{i=1}^{n}\sum_{j=1}^{m}\Big(f_i(t_j)- s_j\Big)^2 $$
+
+$ s(t)_i = a+b*t_i+c*t_i^2+d*t_i^3+e*t_i^4+f*t_i^5 ,t_i=[0,t]$ 
+样条曲线分为4段，所以求得矩阵如下：
+
+$$
+P_s = 
+\begin{pmatrix}
+c_1 & 0 & 0 & 0 \\
+0 & c_2 & 0 & 0 \\
+0 & 0 & c_3 & 0 \\
+0 & 0 & 0 & c_4 \\
+\end{pmatrix}
+$$
+
+$$
+c_i = 
+\begin{pmatrix}
+1 & t_1 & t_1^2 & t_1^3 & t_1^4 & t_1^5 \\
+1 & t_2 & t_2^2  & t_2^3 & t_2^4 & t_2^5 \\
+\vdots & \vdots & \vdots & \vdots& \ddots & \vdots \\
+1 & t_i & t_i^2 & t_i^3 & t_i^4 & t_i^5 \\
+\end{pmatrix}
+$$
+
+t_i表示在时间区域[0,t]内区不同的时间
+
+$x = [a_0,b_0,...,f_0,a_1,...,f_1,a_2,...,f_2,a_3,...,f_3] $
+
+$P_s*x = A_s = [s_0,s_1,...,s_i,...]$，为不同时间对应的曲线段位移
+
+$J_s= w*(A_s-A_r)^T*(A_s-A_r) == 0.5*x^T*2*w*P_s^T*P_s*x -2*w*A_r^T*P_s*x $
+在这里 $A_r$ 为不同时间对应的曲线段参考位移
 
 第三部分是跟车情况下cost，这部分就要求跟车的时候，距离一定要保持在一定范围内，不能被甩的太开，也就是跟进前车，保持效率：
 
