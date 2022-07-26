@@ -1484,7 +1484,7 @@ Status QpSplineStGraph::AddFollowReferenceLineKernel(
 
 代码中给出的方案是：$ 2x^THx + x^Tg(w0) $。但是此时的b权值为weight=5.0\*8/31
 
-第四部分是减速cost，与二三部分形式一致，只有weight不一样，这里weight=100\*8/31。此外加速需要要求无人车和障碍物距离不超过20m。
+第四部分是减速避让cost，与二三部分形式一致，只是weight不一样，这里weight=100\*8/31，减速避让需要无人车和障碍物距离保持20m左右。
 
 第五部分就是综合DP速度规划器和QP速度规划的结果，需要保证两者相差不能太多：
 
